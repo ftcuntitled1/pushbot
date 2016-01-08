@@ -54,6 +54,9 @@ public class UntitledAuto extends OpMode{
     final static double ROTATIONSback1 = DISTANCEback1 / CIRCUMFERENCE;
     final static double COUNTSback1 = ENCODER_CPR * ROTATIONSback1 * GEAR_RATIO;
 
+    private double startTime;
+    private boolean runTimerStarted;
+
     DcMotor leftArm;
 
     DcMotor leftMotor;
@@ -77,7 +80,7 @@ public class UntitledAuto extends OpMode{
     State botstate;
 
     @Override
-    public void init () {
+    public void init() {
         time = new ElapsedTime();
 
         botstate = State.startup;
@@ -103,10 +106,10 @@ public class UntitledAuto extends OpMode{
 
         rightSweeper.setPosition(LEFT_SWEEP_CLOSED_POSITION);
         rightSweeper.setPosition(RIGHT_SWEEP_CLOSED_POSITION);
+
     }
 
-    @Override
-    public void loop () {
+    public void loop() {
 
         switch(botstate) {
             case startup:
@@ -122,14 +125,14 @@ public class UntitledAuto extends OpMode{
 
                 // turn left 45 degrees
 
-                //leftMotor.setTargetPosition((int) COUNTS);
+                //leftMotor.setTargetPosition((int) COUNTSturn1);
                 rightMotor.setTargetPosition((int) COUNTSturn1);
 
                 //leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-                //leftMotor.setPower(0.5);
-                rightMotor.setPower(0.5);
+                //leftMotor.setPower(0.2);
+                rightMotor.setPower(1.0);
 
                 if (Math.abs (rightMotor.getCurrentPosition ()) > COUNTSturn1)
                 {
@@ -155,8 +158,8 @@ public class UntitledAuto extends OpMode{
                 leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-                leftMotor.setPower(0.5);
-                rightMotor.setPower(0.5);
+                leftMotor.setPower(1.0);
+                rightMotor.setPower(1.0);
 
                 if ((Math.abs (rightMotor.getCurrentPosition ()) > COUNTSfoward1) &&
                         (Math.abs (leftMotor.getCurrentPosition ()) > COUNTSfoward1))
@@ -181,8 +184,8 @@ public class UntitledAuto extends OpMode{
                 leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                 //rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-                leftMotor.setPower(0.2);
-                //rightMotor.setPower(0.5);
+                leftMotor.setPower(1.0);
+                //rightMotor.setPower(0.2);
 
                 if (Math.abs (leftMotor.getCurrentPosition ()) > COUNTSturn2)
                 {
@@ -204,12 +207,12 @@ public class UntitledAuto extends OpMode{
                 leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-                leftMotor.setPower(-0.5);
-                rightMotor.setPower(-0.5);
+                leftMotor.setPower(-1.0);
+                rightMotor.setPower(-1.0);
                 if ((Math.abs (rightMotor.getCurrentPosition ()) > COUNTSback1) &&
                         (Math.abs (leftMotor.getCurrentPosition ()) > COUNTSback1))
                 {
-                    leftMotor.setPower(-0.0);
+                    leftMotor.setPower(0.0);
                     rightMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     rightMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -221,16 +224,18 @@ public class UntitledAuto extends OpMode{
             case lift:
 
                 // Move arm motor up unknown ticks
-                double currentTimelift = time.time();
-
-                if (currentTimelift < liftTime) {
-                    //move arm slowly
-                    leftArm.setPower(-0.5);
-                } else {
-                    leftArm.setPower(0.0);
+                //double currentTimelift = time.time();
+                //
+                //if (currentTimelift < liftTime) {
+                //    //move arm slowly
+                //    leftArm.setPower(-1.0);
+                //} else {
+                //    leftArm.setPower(0.0);
+                //    botstate = State.drop;
+                //    }
+                if ( liftBackwardForTime(0.25, 300)) {
                     botstate = State.drop;
-                    }
-
+                }
 
 
                 break;
@@ -287,7 +292,63 @@ public class UntitledAuto extends OpMode{
 
         // Send telemetry data to the driver station.
         //
+        //update_telemetry(); // Update common telemetry
+        telemetry.addData("18", "State: " + botstate);
 
+    } // Enf of loop
 
-    } // PushBotAuto::loop
-} // PushBotAuto
+    public void driveForward(double power) {
+        rightMotor.setPower(-power);
+        leftMotor.setPower(-power);
+    }
+
+    public boolean driveForwardForTime(double power, double targetTime) {
+        driveForward(power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean driveBackwardForTime(double power, double targetTime) {
+        rightMotor.setPower(power);
+        leftMotor.setPower(power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean turnRightForTime(double power, double targetTime) {
+        rightMotor.setPower(power);
+        leftMotor.setPower(-power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean turnLeftForTime(double power, double targetTime) {
+        rightMotor.setPower(-power);
+        leftMotor.setPower(power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean liftBackwardForTime(double power, double targetTime) {
+        leftArm.setPower(-power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean liftForwardForTime(double power, double targetTime) {
+        leftArm.setPower(power);
+        return targetTimeReached(targetTime);
+    }
+
+    public boolean targetTimeReached( double targetTime) {
+
+        if (!runTimerStarted) {
+            runTimerStarted = true;
+            startTime = getRuntime();
+            return false;
+        } else {
+            boolean result = (getRuntime() - startTime) >= targetTime;
+            if (result) {
+                runTimerStarted = false;
+                return result;
+            }
+            return true;
+        }
+    }
+
+}  // PushBotAuto
