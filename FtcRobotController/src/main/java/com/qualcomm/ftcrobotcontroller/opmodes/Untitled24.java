@@ -39,8 +39,8 @@ public class Untitled24 extends OpMode {
         leftMotor.setTargetPosition((int) COUNTS);
         rightMotor.setTargetPosition((int) COUNTS);
 
-        leftMotor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        rightMotor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
         leftMotor.setPower(0.5);
         rightMotor.setPower(0.5);

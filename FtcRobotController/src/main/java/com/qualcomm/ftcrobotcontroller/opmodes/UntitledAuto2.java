@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.ftcrobotcontroller.opmodes.Untitled1Resources;
 
 /**
  * Extends the PushBotTelemetry and PushBotHardware classes to provide a basic
@@ -49,8 +48,8 @@ public class UntitledAuto2 extends OpMode{
     final static double EncoderTolerance = 4.0;
 
     // Test Variables to see if Motors have reached the TargetEncoderTicks
-    boolean leftMotorDone = false;
-    boolean rightMotorDone = false;
+    private boolean leftMotorDone = false;
+    private boolean rightMotorDone = false;
 
     private double startTime;
     private boolean runTimerStarted;
@@ -59,11 +58,13 @@ public class UntitledAuto2 extends OpMode{
     // Defining some static positions for the Servo Motors
     final double LEFT_GRIP_OPEN_POSITION = 0.0;
     final double LEFT_GRIP_CLOSED_POSITION = 1.0;
+
     final double RIGHT_GRIP_OPEN_POSITION = 1.0;
     final double RIGHT_GRIP_CLOSED_POSITION = 0.0;
 
     final double LEFT_SWEEP_OPEN_POSITION = 0.0;
     final double LEFT_SWEEP_CLOSED_POSITION = 1.0;
+
     final double RIGHT_SWEEP_OPEN_POSITION = 1.0;
     final double RIGHT_SWEEP_CLOSED_POSITION = 0.0;
 
@@ -129,7 +130,7 @@ public class UntitledAuto2 extends OpMode{
         leftGripper.setPosition(LEFT_GRIP_OPEN_POSITION);
         rightGripper.setPosition(RIGHT_GRIP_OPEN_POSITION);
 
-        rightSweeper.setPosition(LEFT_SWEEP_CLOSED_POSITION);
+        leftSweeper.setPosition(LEFT_SWEEP_CLOSED_POSITION);
         rightSweeper.setPosition(RIGHT_SWEEP_CLOSED_POSITION);
 
     }
@@ -168,13 +169,13 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setPower(0.2);
                 rightMotor.setPower(1.0);
 
-                if (Math.abs (leftMotorTicksTurnLeft - leftMotor.getCurrentPosition()) > EncoderTolerance)
+                if (Math.abs (leftMotorTicksTurnLeft - leftMotor.getCurrentPosition()) < EncoderTolerance)
                 {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     boolean leftMotorDone = true;
                 }
-                if (Math.abs (rightMotorTicksTurnLeft - rightMotor.getCurrentPosition()) > EncoderTolerance)
+                if (Math.abs (rightMotorTicksTurnLeft - rightMotor.getCurrentPosition()) < EncoderTolerance)
                 {
                     rightMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -205,15 +206,15 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setPower(1.0);
                 rightMotor.setPower(1.0);
 
-                if (Math.abs (leftMotorTicksForward - leftMotor.getCurrentPosition ()) > EncoderTolerance) {
+                if (Math.abs (leftMotorTicksForward - leftMotor.getCurrentPosition ()) < EncoderTolerance) {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     boolean leftMotorDone = true;
                 }
-                if (Math.abs (rightMotorTicksForward - rightMotor.getCurrentPosition ()) > EncoderTolerance) {
+                if (Math.abs (rightMotorTicksForward - rightMotor.getCurrentPosition ()) < EncoderTolerance) {
                     rightMotor.setPower(0.0);
                     rightMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    final boolean rightMotorDone = true;
+                    boolean rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
                     boolean leftMotorDone = false;
@@ -237,20 +238,20 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-                leftMotor.setPower(1.0);
-                rightMotor.setPower(0.2);
+                leftMotor.setPower(-1.0);
+                rightMotor.setPower(-0.2);
 
-                if (Math.abs (leftMotor.getCurrentPosition ()) > leftMotorTicks_turn2)
+                if (Math.abs (leftMotor.getCurrentPosition ()) < leftMotorTicks_turn2)
                 {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     boolean leftMotorDone = true;
                 }
-                if (Math.abs (rightMotor.getCurrentPosition ()) > rightMotorTicks_turn2)
+                if (Math.abs (rightMotor.getCurrentPosition ()) < rightMotorTicks_turn2)
                 {
                     rightMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    final boolean rightMotorDone = true;
+                    boolean rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
                     boolean leftMotorDone = false;
@@ -277,12 +278,12 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setPower(-1.0);
                 rightMotor.setPower(-1.0);
 
-                if (Math.abs (leftMotorTicksBackToWall - leftMotor.getCurrentPosition ()) > EncoderTolerance) {
+                if (Math.abs (leftMotorTicksBackToWall - leftMotor.getCurrentPosition ()) < EncoderTolerance) {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     boolean leftMotorDone = true;
                 }
-                if (Math.abs (rightMotorTicksBackToWall - rightMotor.getCurrentPosition ()) > EncoderTolerance) {
+                if (Math.abs (rightMotorTicksBackToWall - rightMotor.getCurrentPosition ()) < EncoderTolerance) {
                     rightMotor.setPower(0.0);
                     rightMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     final boolean rightMotorDone = true;
@@ -349,12 +350,28 @@ public class UntitledAuto2 extends OpMode{
 
         // Send telemetry data to the driver station.
 
-        telemetry.addData("18", "State: " + botstate);
-        telemetry.addData("19", "Right Motor Ticks: " + rightMotor.getCurrentPosition());
-        telemetry.addData("20", "Right Motor Power: " + rightMotor.getPower());
-        telemetry.addData("21", "Left Motor Ticks: " + leftMotor.getCurrentPosition());
-        telemetry.addData("22", "Left Motor Power: " + leftMotor.getPower());
-        telemetry.addData("23", "Arm Motor Power: " + leftArm.getPower());
+        telemetry.addData("19", "State: " + botstate);
+
+        telemetry.addData("20", "Right Motor");
+        telemetry.addData("21", "      * Target: " + rightMotor.getTargetPosition());
+        telemetry.addData("22", "      * Position: " + rightMotor.getCurrentPosition());
+        telemetry.addData("23", "      * Power: " + rightMotor.getPower());
+
+        telemetry.addData("24", "Left Motor");
+        telemetry.addData("25", "      * Target: " + leftMotor.getTargetPosition());
+        telemetry.addData("26", "      * Position: " + leftMotor.getCurrentPosition());
+        telemetry.addData("27", "      * Power: " + leftMotor.getPower());
+
+        telemetry.addData("28", "Arm Motor");
+        telemetry.addData("29", "      * Power: " + leftArm.getPower());
+
+        telemetry.addData("30", "Grippers");
+        telemetry.addData("31", "      * Left Position: " + leftGripper.getPosition());
+        telemetry.addData("32", "      * Right Position: " + rightGripper.getPosition());
+
+        telemetry.addData("33", "Sweepers");
+        telemetry.addData("34", "      * Left Position: " + leftSweeper.getPosition());
+        telemetry.addData("35", "      * Right Position: " + rightSweeper.getPosition());
 
 
 
@@ -445,28 +462,30 @@ public class UntitledAuto2 extends OpMode{
      * @param WheelLocation
      * @return
      */
-    public static double turnForDegrees (double Degrees, String WheelLocation) {
+    public double turnForDegrees (double Degrees, String WheelLocation) {
 
-        if (WheelLocation == "Outer")
+
+        if (WheelLocation.equalsIgnoreCase("outer"))
         {
             final double TurnDiameterOuter = AxleWidth + AxleWidthBuffer * 2;
             final double TurnCircumferenceOuter = TurnDiameterOuter * Math.PI;
-            final double TickstoTurnOuter = TurnCircumferenceOuter / WheelDiameter * EncoderTicksPerRotation;
-            final double MotorTicksToTurnOuter = Degrees / TickstoTurnOuter;
+            final double TickstoTurnOuter = TurnCircumferenceOuter / WheelCircumference * EncoderTicksPerRotation * GearRatio;
+            final double TurnRatioOuter = Degrees / 360;
+            final double MotorTicksToTurnOuter = TurnRatioOuter * TickstoTurnOuter;
             return (MotorTicksToTurnOuter);
         }
-        if (WheelLocation == "Inner")
-        {
+        if (WheelLocation.equalsIgnoreCase("inner")) {
             final double TurnDiameterInner = AxleWidthBuffer * 2;
             final double TurnCircumferenceInner = TurnDiameterInner * Math.PI;
-            final double TickstoTurnInner = TurnCircumferenceInner / WheelDiameter * EncoderTicksPerRotation;
-            final double MotorTicksToTurnInner = Degrees / TickstoTurnInner;
+            final double TickstoTurnInner = TurnCircumferenceInner / WheelCircumference * EncoderTicksPerRotation * GearRatio;
+            final double TurnRatioInner = Degrees / 360;
+            final double MotorTicksToTurnInner = TurnRatioInner * TickstoTurnInner;
             return (MotorTicksToTurnInner);
         }
         else
         {
             //Do Nothing
-            return 0;
+            return 10;
         }
     }
 

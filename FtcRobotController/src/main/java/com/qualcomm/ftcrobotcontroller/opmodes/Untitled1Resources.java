@@ -1,5 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.robotcore.hardware.DcMotorController;
+
 /**
  * Created by Stephen on 1/12/2016.
  */
@@ -44,31 +46,62 @@ public class Untitled1Resources {
 
         final double WheelCircumference = WheelDiameter * Math.PI;
 
-        if (WheelLocation == "Outer")
-        {
+        if (WheelLocation == "Outer") {
             final double TurnDiameterOuter = AxleWidth + AxleWidthBuffer * 2;
             final double TurnCircumferenceOuter = TurnDiameterOuter * Math.PI;
             final double TickstoTurnOuter = TurnCircumferenceOuter / WheelDiameter * EncoderTicksPerRotation;
             final double TurnTicksOuter = Degrees / TickstoTurnOuter;
             return (TurnTicksOuter);
         }
-        if (WheelLocation == "Inner")
-        {
+        if (WheelLocation == "Inner") {
 
             final double TurnDiameterInner = AxleWidthBuffer * 2;
             final double TurnCircumferenceInner = TurnDiameterInner * Math.PI;
             final double TickstoTurnInner = TurnCircumferenceInner / WheelDiameter * EncoderTicksPerRotation;
             final double TurnTicksInner = Degrees / TickstoTurnInner;
             return (TickstoTurnInner);
-        }
-        else
-        {
+        } else {
             //Do Nothing
             return 0;
         }
+    }
+       /* public double TurnRobot ()
+    {
+
+        final double leftMotorTicks_turn2 = turnForDegrees(135, "Inner");
+        final double rightMotorTicks_turn2 = turnForDegrees(135, "Outer");
+
+        leftMotor.setTargetPosition((int) leftMotorTicks_turn2 );
+        rightMotor.setTargetPosition((int) rightMotorTicks_turn2);
+
+        leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+
+        leftMotor.setPower(-1.0);
+        rightMotor.setPower(-0.2);
+
+        if (Math.abs (leftMotor.getCurrentPosition ()) > leftMotorTicks_turn2)
+        {
+            leftMotor.setPower(0.0);
+            leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+            boolean leftMotorDone = true;
+        }
+        if (Math.abs (rightMotor.getCurrentPosition ()) > rightMotorTicks_turn2)
+        {
+            rightMotor.setPower(0.0);
+            leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+            boolean rightMotorDone = true;
+        }
+        if ((leftMotorDone) && (rightMotorDone)){
+            boolean leftMotorDone = false;
+            boolean rightMotorDone = false;
+            botstate = State.back2;
+        }
+
 
 
 
     }
+*/
 
 }
