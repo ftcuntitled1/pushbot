@@ -101,6 +101,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("Gripper", Gripper.class);
     manager.register("Everything", Everything.class);
     manager.register("UntitledAuto1", UntitledAuto1.class);
+    manager.register("UntitledAuto2", UntitledAuto2.class);
     manager.register("Untitled24", Untitled24.class);
   }
 }
