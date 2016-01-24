@@ -45,7 +45,7 @@ public class Untitled24 extends OpMode {
         leftMotor.setPower(0.5);
         rightMotor.setPower(0.5);
 
-        leftArm.setPower(-0.1);
+        leftArm.setPower(0.0);
     }
 
     @Override

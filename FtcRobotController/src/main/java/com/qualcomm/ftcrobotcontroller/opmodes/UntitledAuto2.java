@@ -24,49 +24,49 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class UntitledAuto2 extends OpMode{
 
     // Enter the number of Ticks per single Rotation of Motor (ours is 1440)
-    final static int EncoderTicksPerRotation = 1440;
+    int EncoderTicksPerRotation = 1440;
 
     // Calculated gear ratio from motor to wheel
     // Number of Teeth on the Tire Axle Gear divided by the Number of Teeth on the Motor Gear
-    final static double GearRatio = 2;
+    double GearRatio = 2;
 
     // The Full Diameter of the Wheel Tread in Inches
     // Normally marked on the side of the Tire Tread, but might not be in inches.
-    final static int WheelDiameter = 4;
+    int WheelDiameter = 4;
 
     // Calculating the Circumference of the Tire based on the above Variables Provided
-    final static double WheelCircumference = Math.PI * WheelDiameter;
+    double WheelCircumference = Math.PI * WheelDiameter;
 
     // The distance between the left and right tires
-    final static double AxleWidth = 15.5;
+    double AxleWidth = 15.5;
 
     // Add a buffer to the inside turn radius to prevent freezing
-    final static double AxleWidthBuffer = 1;
+    double AxleWidthBuffer = 1;
 
     // Encoder Tolerance +/- based on ticks not inches
     // Also helps with the prevention of freezing when comparing TargetEncoderTicks
-    final static double EncoderTolerance = 4.0;
+    double EncoderTolerance = 4.0;
 
     // Test Variables to see if Motors have reached the TargetEncoderTicks
-    private boolean leftMotorDone = false;
-    private boolean rightMotorDone = false;
+    boolean leftMotorDone = false;
+    boolean rightMotorDone = false;
 
-    private double startTime;
-    private boolean runTimerStarted;
+    double startTime;
+    boolean runTimerStarted;
 
 
     // Defining some static positions for the Servo Motors
-    final double LEFT_GRIP_OPEN_POSITION = 0.0;
-    final double LEFT_GRIP_CLOSED_POSITION = 1.0;
+    double LEFT_GRIP_OPEN_POSITION = 0.0;
+    double LEFT_GRIP_CLOSED_POSITION = 1.0;
 
-    final double RIGHT_GRIP_OPEN_POSITION = 1.0;
-    final double RIGHT_GRIP_CLOSED_POSITION = 0.0;
+    double RIGHT_GRIP_OPEN_POSITION = 1.0;
+    double RIGHT_GRIP_CLOSED_POSITION = 0.0;
 
-    final double LEFT_SWEEP_OPEN_POSITION = 0.0;
-    final double LEFT_SWEEP_CLOSED_POSITION = 1.0;
+    double LEFT_SWEEP_OPEN_POSITION = 0.0;
+    double LEFT_SWEEP_CLOSED_POSITION = 1.0;
 
-    final double RIGHT_SWEEP_OPEN_POSITION = 1.0;
-    final double RIGHT_SWEEP_CLOSED_POSITION = 0.0;
+    double RIGHT_SWEEP_OPEN_POSITION = 1.0;
+    double RIGHT_SWEEP_CLOSED_POSITION = 0.0;
 
     // Setting the friendly names for our Motors and Servos
     DcMotor leftArm;
@@ -83,12 +83,15 @@ public class UntitledAuto2 extends OpMode{
     ElapsedTime time;
 
     // Timers to keep track of time for the robot programming run time
-    static final double sweeperTime = 1.0;
-    static final double dropTime = 1.0;
-    static final double liftTime = 1.0;
+    double sweeperTime = 1.0;
+    double dropTime = 1.0;
+    double liftTime = 1.0;
 
     // Enumerating the potential list of options or cases for our Switch block.
-    enum State {startup, turn1, foward1, turn2, lift, back2, drop, flippers, done}
+    enum State
+    {
+        startup, turn1, foward1, turn2, lift, back2, drop, flippers, done
+    }
 
 
     // The custom State, which will track where we are in our program run status
@@ -173,17 +176,17 @@ public class UntitledAuto2 extends OpMode{
                 {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean leftMotorDone = true;
+                    leftMotorDone = true;
                 }
                 if (Math.abs (rightMotorTicksTurnLeft - rightMotor.getCurrentPosition()) < EncoderTolerance)
                 {
                     rightMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    final boolean rightMotorDone = true;
+                    rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
-                    boolean leftMotorDone = false;
-                    boolean rightMotorDone = false;
+                    leftMotorDone = false;
+                    rightMotorDone = false;
                     botstate = State.foward1;
                 }
 
@@ -194,8 +197,8 @@ public class UntitledAuto2 extends OpMode{
                 // Go forward 85.00 inches
                 //final static double DISTANCEfoward1 = 85.00;
 
-                final double leftMotorTicksForward = driveInchesWithEncoder(85.0);
-                final double rightMotorTicksForward = driveInchesWithEncoder(85.0);
+                double leftMotorTicksForward = driveInchesWithEncoder(85.0);
+                double rightMotorTicksForward = driveInchesWithEncoder(85.0);
 
                 leftMotor.setTargetPosition((int) leftMotorTicksForward);
                 rightMotor.setTargetPosition((int) rightMotorTicksForward);
@@ -206,19 +209,21 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setPower(1.0);
                 rightMotor.setPower(1.0);
 
-                if (Math.abs (leftMotorTicksForward - leftMotor.getCurrentPosition ()) < EncoderTolerance) {
+                if (Math.abs (leftMotorTicksForward - leftMotor.getCurrentPosition ()) < EncoderTolerance)
+                {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean leftMotorDone = true;
+                    leftMotorDone = true;
                 }
-                if (Math.abs (rightMotorTicksForward - rightMotor.getCurrentPosition ()) < EncoderTolerance) {
+                if (Math.abs (rightMotorTicksForward - rightMotor.getCurrentPosition ()) < EncoderTolerance)
+                {
                     rightMotor.setPower(0.0);
                     rightMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean rightMotorDone = true;
+                    rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
-                    boolean leftMotorDone = false;
-                    boolean rightMotorDone = false;
+                    leftMotorDone = false;
+                    rightMotorDone = false;
                     botstate = State.turn2;
                 }
 
@@ -229,8 +234,8 @@ public class UntitledAuto2 extends OpMode{
                 // Turn left 135 degrees
                 //final static double DISTANCEturn2 = 38.893; //135 degrees
 
-                final double leftMotorTicks_turn2 = turnForDegrees(135, "Inner");
-                final double rightMotorTicks_turn2 = turnForDegrees(135, "Outer");
+                double leftMotorTicks_turn2 = turnForDegrees(135, "Inner");
+                double rightMotorTicks_turn2 = turnForDegrees(135, "Outer");
 
                 leftMotor.setTargetPosition((int) leftMotorTicks_turn2 );
                 rightMotor.setTargetPosition((int) rightMotorTicks_turn2);
@@ -245,17 +250,17 @@ public class UntitledAuto2 extends OpMode{
                 {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean leftMotorDone = true;
+                    leftMotorDone = true;
                 }
                 if (Math.abs (rightMotor.getCurrentPosition ()) < rightMotorTicks_turn2)
                 {
                     rightMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean rightMotorDone = true;
+                    rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
-                    boolean leftMotorDone = false;
-                    boolean rightMotorDone = false;
+                    leftMotorDone = false;
+                    rightMotorDone = false;
                     botstate = State.back2;
                 }
 
@@ -266,8 +271,8 @@ public class UntitledAuto2 extends OpMode{
                 // Go backwards 23 inches
                 //final static double DISTANCEback1 = 23.00;
 
-                final double leftMotorTicksBackToWall = driveInchesWithEncoder(85.0);
-                final double rightMotorTicksBackToWall = driveInchesWithEncoder(85.0);
+                double leftMotorTicksBackToWall = driveInchesWithEncoder(85.0);
+                double rightMotorTicksBackToWall = driveInchesWithEncoder(85.0);
 
                 leftMotor.setTargetPosition((int) leftMotorTicksBackToWall);
                 rightMotor.setTargetPosition((int) rightMotorTicksBackToWall);
@@ -278,19 +283,21 @@ public class UntitledAuto2 extends OpMode{
                 leftMotor.setPower(-1.0);
                 rightMotor.setPower(-1.0);
 
-                if (Math.abs (leftMotorTicksBackToWall - leftMotor.getCurrentPosition ()) < EncoderTolerance) {
+                if (Math.abs (leftMotorTicksBackToWall - leftMotor.getCurrentPosition ()) < EncoderTolerance)
+                {
                     leftMotor.setPower(0.0);
                     leftMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    boolean leftMotorDone = true;
+                    leftMotorDone = true;
                 }
-                if (Math.abs (rightMotorTicksBackToWall - rightMotor.getCurrentPosition ()) < EncoderTolerance) {
+                if (Math.abs (rightMotorTicksBackToWall - rightMotor.getCurrentPosition ()) < EncoderTolerance)
+                {
                     rightMotor.setPower(0.0);
                     rightMotor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-                    final boolean rightMotorDone = true;
+                    rightMotorDone = true;
                 }
                 if ((leftMotorDone) && (rightMotorDone)){
-                    boolean leftMotorDone = false;
-                    boolean rightMotorDone = false;
+                    leftMotorDone = false;
+                    rightMotorDone = false;
                     botstate = State.lift;
                 }
 
@@ -388,45 +395,53 @@ public class UntitledAuto2 extends OpMode{
      * Custom Methods for our Autonomous Program
      */
 
-    public void driveForward(double power) {
+    public void driveForward(double power)
+    {
         rightMotor.setPower(-power);
         leftMotor.setPower(-power);
     }
 
-    public boolean driveForwardForTime(double power, double targetTime) {
+    public boolean driveForwardForTime(double power, double targetTime)
+    {
         driveForward(power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean driveBackwardForTime(double power, double targetTime) {
+    public boolean driveBackwardForTime(double power, double targetTime)
+    {
         rightMotor.setPower(power);
         leftMotor.setPower(power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean turnRightForTime(double power, double targetTime) {
+    public boolean turnRightForTime(double power, double targetTime)
+    {
         rightMotor.setPower(power);
         leftMotor.setPower(-power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean turnLeftForTime(double power, double targetTime) {
+    public boolean turnLeftForTime(double power, double targetTime)
+    {
         rightMotor.setPower(-power);
         leftMotor.setPower(power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean liftArmBackwardForTime(double power, double targetTime) {
+    public boolean liftArmBackwardForTime(double power, double targetTime)
+    {
         leftArm.setPower(-power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean liftArmForwardForTime(double power, double targetTime) {
+    public boolean liftArmForwardForTime(double power, double targetTime)
+    {
         leftArm.setPower(power);
         return targetTimeReached(targetTime);
     }
 
-    public boolean targetTimeReached( double targetTime) {
+    public boolean targetTimeReached( double targetTime)
+    {
 
         if (!runTimerStarted) {
             runTimerStarted = true;
@@ -445,47 +460,62 @@ public class UntitledAuto2 extends OpMode{
     /**
      * This Method will calculate the number of MotorTicksToTurn for the motor to turn
      * based on the given parameter of distanceInches when called
-     * @param distanceInches
-     * @return
+     * param distanceInches
+     * return
      */
-    public double driveInchesWithEncoder (double distanceInches) {
-        final double WheelRotations = distanceInches / WheelCircumference;
-        final double MotorTicksToTurn = EncoderTicksPerRotation * WheelRotations * GearRatio;
-        return MotorTicksToTurn;
+    public double driveInchesWithEncoder (double distanceInches)
+    {
+        double WheelRotations = distanceInches / WheelCircumference;
+        return EncoderTicksPerRotation * WheelRotations * GearRatio;
     }
 
     /**
      * This Method will return the value for the MotorTicksToTurnOuter or MotorTicksToTurnInner
      * for the motor to turn based on the Gyro Degrees when called adn dynamically change the
      * Inner and Outer based on the WheelLocation
-     * @param Degrees
-     * @param WheelLocation
-     * @return
+     * param Degrees
+     * param WheelLocation
+     * return
      */
-    public double turnForDegrees (double Degrees, String WheelLocation) {
+    public double turnForDegrees (double Degrees, String WheelLocation)
+    {
 
 
         if (WheelLocation.equalsIgnoreCase("outer"))
         {
-            final double TurnDiameterOuter = AxleWidth + AxleWidthBuffer * 2;
-            final double TurnCircumferenceOuter = TurnDiameterOuter * Math.PI;
-            final double TickstoTurnOuter = TurnCircumferenceOuter / WheelCircumference * EncoderTicksPerRotation * GearRatio;
-            final double TurnRatioOuter = Degrees / 360;
-            final double MotorTicksToTurnOuter = TurnRatioOuter * TickstoTurnOuter;
-            return (MotorTicksToTurnOuter);
+            // Set to the AxleWidth plus the AxleWidthBoffer, if is the outside wheel turning
+            double RobotTurnDiameterOuter = AxleWidth + AxleWidthBuffer * 2;
+            // Total Circumference in Inches for the Robot Turn Radius of 360
+            double RobotTurnCircumferenceOuter = RobotTurnDiameterOuter * Math.PI;
+            // The number of WheelRotations to drive the full Robot Turn Radius of 360
+            double WheelRotationsOuter = RobotTurnCircumferenceOuter / WheelCircumference;
+            // The number of EncoderTicks for the Motor to turn for the full Robot Turn Radius of 360
+            double TicksToTurnOuter = WheelRotationsOuter * EncoderTicksPerRotation * GearRatio;
+            // Degrees for how far we want to turn out of the 360, so a straight ratio here
+            double TurnRatioOuter = Degrees / 360;
+            // Now wrapping it up with the Ration * to TicksToTurnOuter to get our partial turn
+            // return these results back to the part of the program that called this method
+            return TurnRatioOuter * TicksToTurnOuter;
         }
         if (WheelLocation.equalsIgnoreCase("inner")) {
-            final double TurnDiameterInner = AxleWidthBuffer * 2;
-            final double TurnCircumferenceInner = TurnDiameterInner * Math.PI;
-            final double TickstoTurnInner = TurnCircumferenceInner / WheelCircumference * EncoderTicksPerRotation * GearRatio;
-            final double TurnRatioInner = Degrees / 360;
-            final double MotorTicksToTurnInner = TurnRatioInner * TickstoTurnInner;
-            return (MotorTicksToTurnInner);
+            // Set to the AxleWidthBuffer only, if is the inner wheel turning
+            double RobotTurnDiameterInner = AxleWidthBuffer * 2;
+            // Total Circumference in Inches for the Robot Turn Radius of 360
+            double RobotTurnCircumferenceInner = RobotTurnDiameterInner * Math.PI;
+            // The number of WheelRotations to drive the full Robot Turn Radius of 360
+            double WheelRotationsInner = RobotTurnCircumferenceInner / WheelCircumference;
+            // The number of EncoderTicks for the Motor to turn for the full Robot Turn Radius of 360
+            double TicksToTurnInner = WheelRotationsInner * EncoderTicksPerRotation * GearRatio;
+            // Degrees for how far we want to turn out of the 360, so a straight ratio here
+            double TurnRatioInner = Degrees / 360;
+            // Now wrapping it up with the Ratio * TicksToTurnInner to get our partial turn
+            // return these results back to the part of the program that called this method
+            return TurnRatioInner * TicksToTurnInner;
         }
         else
         {
-            //Do Nothing
-            return 10;
+            //Do Nothing set the
+            return 0;
         }
     }
 
