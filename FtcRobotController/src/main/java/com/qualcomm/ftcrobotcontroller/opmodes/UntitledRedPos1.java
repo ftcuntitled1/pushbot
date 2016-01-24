@@ -228,7 +228,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
                 // Check to make sure the Robot is ready
                 if (encodersAtZero()) {
                     // Encoders are Zero, so we are ready
-                    botstate = State.turn1;
+                    mCurrentState = State.turn1;
                 } else {
                     // Encoders are not Zero, so send that back to the drivers station
                     // Display Diagnostic data for this state.
@@ -251,7 +251,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
 
             case forward1:
                 if(BothMotorEncodersZero()) {
-                    dualMoveRobot("forwards", 10, State.back2);
+                    dualMoveRobot("forwards", 10, State.turn2);
                 }
                 else
                 {
@@ -275,7 +275,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
 
             case back2:
                 if(BothMotorEncodersZero()) {
-                    dualMoveRobot("backwards", 10, State.waiting);
+                    dualMoveRobot("backwards", 10, State.raisearm);
                 }
                 else
                 {
@@ -313,20 +313,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
                 if ( raiseArmForTime(0.1, 10)) {
                     mLeftArm.setPower(0.0);
                     targetTimeReached(1);
-                    botstate = State.drop;
-                }
-                else
-                {
-                    // Display Diagnostic data for this state.
-                    telemetry.addData("1", "Arm Motor Power: " + mLeftArm.getPower());
-                }
-                break;
-
-            case lowerarm:
-                if ( lowerArmForTime(0.1, 10)) {
-                    mLeftArm.setPower(0.0);
-                    targetTimeReached(1);
-                    botstate = State.drop;
+                    mCurrentState = State.closehand;
                 }
                 else
                 {
@@ -359,10 +346,23 @@ public class UntitledRedPos1 extends PushBotTelemetry{
                 }
                 break;
 
+            case lowerarm:
+                if ( lowerArmForTime(0.1, 10)) {
+                    mLeftArm.setPower(0.0);
+                    targetTimeReached(1);
+                    mCurrentState = State.waiting;
+                }
+                else
+                {
+                    // Display Diagnostic data for this state.
+                    telemetry.addData("1", "Arm Motor Power: " + mLeftArm.getPower());
+                }
+                break;
+
             case waiting:
                 if (mStateTime.time() > 10.0)
                 {
-                    botstate = State.done;
+                    mCurrentState = State.done;
                 }
                 else
                 {
@@ -385,6 +385,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
 
 
         // Send telemetry data to the driver station.
+        /*
         update_telemetry();
         update_gamepad_telemetry();
         telemetry.addData("110", "--------------------------------");
@@ -414,6 +415,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
         telemetry.addData("163", "      * Right Position: " + mRightSweeper.getPosition());
         telemetry.addData("990", "--------------------------------");
         telemetry.addData("991", "Version: " + Version);
+        */
 
     } // End of start
 
@@ -819,7 +821,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
         mLeftGripper.setPosition(LEFT_GRIP_CLOSED_POSITION);
         mRightGripper.setPosition(RIGHT_GRIP_CLOSED_POSITION);
         if(areGrippersClosed()) {
-            botstate = NextState;
+            mCurrentState = NextState;
         }
     }
 
@@ -842,7 +844,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
         mLeftGripper.setPosition(LEFT_GRIP_OPEN_POSITION);
         mRightGripper.setPosition(RIGHT_GRIP_OPEN_POSITION);
         if(areGrippersOpen()) {
-            botstate = NextState;
+            mCurrentState = NextState;
         }
     }
 
@@ -943,7 +945,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
             resetMotorEncoders();
         }
         if (BothMotorEncodersZero()) {
-            botstate = NextState;
+            mCurrentState = NextState;
         }
     }
 
@@ -1016,7 +1018,7 @@ public class UntitledRedPos1 extends PushBotTelemetry{
             setMotorPower(mRightDrive, 0.0f);
             resetMotorEncoders();
             if(BothMotorEncodersZero()) {
-                botstate = NextState;
+                mCurrentState = NextState;
             }
         }
     }
