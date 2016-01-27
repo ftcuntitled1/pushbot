@@ -70,8 +70,8 @@ public class Everything extends OpMode {
             rightSweeper.setPosition(RIGHT_SWEEP_CLOSED_POSITION);
         }
 
-        float leftY = -gamepad1.left_stick_y;
-        float rightY = -gamepad1.right_stick_y;
+        float leftY = gamepad1.left_stick_y;
+        float rightY = gamepad1.right_stick_y;
 
         float leftarmY = -gamepad2.left_stick_y;
 

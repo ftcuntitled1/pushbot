@@ -100,13 +100,9 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("PushBotSquare", PushBotSquare.class);
     manager.register("Gripper", Gripper.class);
     manager.register("Everything", Everything.class);
-    manager.register("Untitled24", Untitled24.class);
     manager.register("UntitledAuto1", UntitledAuto1.class);
     manager.register("UntitledAuto2", UntitledAuto2.class);
     manager.register("UntitledAuto3", UntitledAuto3.class);
-    manager.register("UntitledManualGyro", UntitledManualGyro.class);
-    manager.register("UntitledManualGyroGo", UntitledManualGyroGo.class);
-    manager.register("UntitledRedTest", UntitledRedTest.class);
-    manager.register("UntitledRedPos1", UntitledRedPos1.class);
+    manager.register("Untitled24", Untitled24.class);
   }
 }

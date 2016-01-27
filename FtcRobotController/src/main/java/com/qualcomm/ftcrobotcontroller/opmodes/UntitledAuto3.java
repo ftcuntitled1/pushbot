@@ -22,6 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class UntitledAuto3 extends PushBotTelemetry {
 
+    //Enter the version of the program
+    String botversion = "1.0.0";
     // Enter the number of Ticks per single Rotation of Motor (ours is 1440)
     int EncoderTicksPerRotation = 1440;
 
@@ -36,8 +38,8 @@ public class UntitledAuto3 extends PushBotTelemetry {
     // Calculating the Circumference of the Tire based on the above Variables Provided
     double WheelCircumference = Math.PI * WheelDiameter;
 
-    // The distance between the left and right tires
-    double AxleWidth = 15.5;
+    // The distance between the left and right tires //Original width 15.5
+    double AxleWidth = 14.5;
 
     // Add a buffer to the inside turn radius to prevent freezing
     double AxleWidthBuffer = 1;
@@ -149,6 +151,26 @@ public class UntitledAuto3 extends PushBotTelemetry {
     }
 
     /**
+     * Send preliminary data back to the driver station on the current state and driving motors
+     */
+    @Override
+    public void init_loop()
+    {
+        resetMotorEncoders();
+
+        telemetry.addData("99", "--------------------------------");
+        telemetry.addData("100", "State: " + botstate);
+        telemetry.addData("101", "Version: " + botversion);
+        telemetry.addData("102", "--------------------------------");
+        telemetry.addData("103", "Right Motor");
+        telemetry.addData("105", "      * Current: " + rightMotor.getCurrentPosition());
+        telemetry.addData("107", "--------------------------------");
+        telemetry.addData("108", "Left Motor");
+        telemetry.addData("110", "      * Current: " + leftMotor.getCurrentPosition());
+        telemetry.addData("112", "--------------------------------");
+    }
+
+    /**
      * This is our main loop ( or program the is run when you hit the play button
      * on the drivers station phone and will continue looping until you hit stop
      */
@@ -177,12 +199,20 @@ public class UntitledAuto3 extends PushBotTelemetry {
                     resetMotorEncoders();
                     botstate = State.turn1_wait;
                 }
+                else
+                {
+                    DisplayMotorTelemetry();
+                }
                 break;
 
             case turn1_wait:
                 if (areBothMotorEncodersZero())
                 {
-                    botstate = State.forward1;
+                    botstate = State.done;
+                }
+                else
+                {
+                    DisplayMotorTelemetry();
                 }
                 break;
 
@@ -202,12 +232,20 @@ public class UntitledAuto3 extends PushBotTelemetry {
                     resetMotorEncoders();
                     botstate = State.forward1_wait;
                 }
+                else
+                {
+                    DisplayMotorTelemetry();
+                }
                 break;
 
             case forward1_wait:
                 if (areBothMotorEncodersZero())
                 {
                     botstate = State.turn2;
+                }
+                else
+                {
+                   DisplayMotorTelemetry();
                 }
                 break;
 
@@ -227,11 +265,19 @@ public class UntitledAuto3 extends PushBotTelemetry {
                     resetMotorEncoders();
                     botstate = State.turn2_wait;
                 }
+                else
+                {
+                   DisplayMotorTelemetry();
+                }
                 break;
 
             case turn2_wait:
                 if (areBothMotorEncodersZero()) {
                     botstate = State.back2;
+                }
+                else
+                {
+                    DisplayMotorTelemetry();
                 }
                 break;
 
@@ -251,11 +297,19 @@ public class UntitledAuto3 extends PushBotTelemetry {
                     resetMotorEncoders();
                     botstate = State.back2_wait;
                 }
+                else
+                {
+                    DisplayMotorTelemetry();
+                }
                 break;
 
             case back2_wait:
                 if (areBothMotorEncodersZero()) {
                     botstate = State.lift;
+                }
+                else
+                {
+                    DisplayMotorTelemetry();
                 }
                 break;
 
@@ -291,7 +345,7 @@ public class UntitledAuto3 extends PushBotTelemetry {
         }
 
 
-        // Send telemetry data to the driver station.
+      /*  // Send telemetry data to the driver station.
         update_telemetry ();
         update_gamepad_telemetry();
         telemetry.addData("110", "--------------------------------");
@@ -318,7 +372,7 @@ public class UntitledAuto3 extends PushBotTelemetry {
         telemetry.addData("161", "      *  Left Position: " + leftSweeper.getPosition());
         telemetry.addData("162", "      * Right Position: " + rightSweeper.getPosition());
         telemetry.addData("100", "--------------------------------");
-
+*/
     } // End of start
 
     // Ending the Autonomous Program
@@ -496,7 +550,7 @@ public class UntitledAuto3 extends PushBotTelemetry {
     boolean isLeftMotorEncoderZero ()
     {
         boolean LeftMotorEncoderZero = false;
-        if (a_left_encoder_count () == 0)
+        if (a_left_encoder_count() == 0)
         {
             LeftMotorEncoderZero = true;
         }
@@ -507,7 +561,7 @@ public class UntitledAuto3 extends PushBotTelemetry {
     boolean isRigthMotorEncoderZero ()
     {
         boolean RightMotorEncoderZero = false;
-        if (a_right_encoder_count () == 0)
+        if (a_right_encoder_count() == 0)
         {
             RightMotorEncoderZero = true;
         }
@@ -614,8 +668,7 @@ public class UntitledAuto3 extends PushBotTelemetry {
      * param Distance - (0 - 999 Inches)
      * param Direction - (Forward, Backwards, RTurn, LTurn)
      */
-    void RobotMove(int Distance, String Direction, State NextState)
-    {
+    void RobotMove(int Distance, String Direction, State NextState) {
         double leftMotorTicks = driveInchesWithEncoder(Distance);
         double rightMotorTicks = driveInchesWithEncoder(Distance);
 
@@ -628,25 +681,38 @@ public class UntitledAuto3 extends PushBotTelemetry {
         leftMotor.setPower(-1.0);
         rightMotor.setPower(-1.0);
 
-        if(hasLeftMotorEncodersReachedTarget(leftMotorTicks))
-        {
-            setMotorPower(leftMotor,0.0f);
+        if (hasLeftMotorEncodersReachedTarget(leftMotorTicks)) {
+            setMotorPower(leftMotor, 0.0f);
             resetMotorEncoder(leftMotor);
             leftMotorFinished = true;
         }
-        if(hasRightMotorEncodersReachedTarget(rightMotorTicks))
-        {
+        if (hasRightMotorEncodersReachedTarget(rightMotorTicks)) {
             setMotorPower(rightMotor, 0.0f);
             resetMotorEncoder(rightMotor);
             rightMotorFinished = true;
         }
-        if((leftMotorFinished)&&(rightMotorFinished))
-        {
+        if ((leftMotorFinished) && (rightMotorFinished)) {
             leftMotorFinished = false;
             rightMotorFinished = false;
             botstate = NextState;
         }
     }
 
+
+        //displays drive motor telemetry
+
+    public void DisplayMotorTelemetry() {
+        telemetry.addData("102", "--------------------------------");
+        telemetry.addData("103", "Right Motor");
+        telemetry.addData("104", "      *  Target: " + rightMotor.getTargetPosition());
+        telemetry.addData("105", "      * Current: " + rightMotor.getCurrentPosition());
+        telemetry.addData("106", "      *   Power: " + rightMotor.getPower());
+        telemetry.addData("107", "--------------------------------");
+        telemetry.addData("108", "Left Motor");
+        telemetry.addData("109", "      *  Target: " + leftMotor.getTargetPosition());
+        telemetry.addData("110", "      * Current: " + leftMotor.getCurrentPosition());
+        telemetry.addData("111", "      *   Power: " + leftMotor.getPower());
+        telemetry.addData("112", "--------------------------------");
+    }
 
 }  // PushBotAuto
